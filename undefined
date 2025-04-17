@@ -1,0 +1,9 @@
+import UploadHistory from "@/components/partner/UploadHistory";
+
+export default function UploadHistoryStoryboard() {
+  return (
+    <div className="bg-white">
+      <UploadHistory />
+    </div>
+  );
+}

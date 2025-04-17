@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "../../../supabase/supabase";
 import {
   Card,
   CardContent,
@@ -27,10 +27,6 @@ import {
 import StatusTag from "@/components/common/StatusTag";
 import TopNavigation from "../dashboard/layout/TopNavigation";
 import Sidebar from "../dashboard/layout/Sidebar";
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function PartnerShops() {
   const [shops, setShops] = useState<any[]>([]);
@@ -68,17 +64,88 @@ export default function PartnerShops() {
     },
   ];
 
+  // Mock data for shops
+  const mockShops = [
+    {
+      id: 1,
+      name: "Coffee Haven",
+      location: "London",
+      type: "Cafe",
+      contact_name: "James Wilson",
+      status: "active",
+      commission_type: "Percentage",
+      commission_value: "15%",
+      leads_count: 8,
+    },
+    {
+      id: 2,
+      name: "Bakery Delight",
+      location: "Manchester",
+      type: "Bakery",
+      contact_name: "Sarah Johnson",
+      status: "active",
+      commission_type: "Percentage",
+      commission_value: "12%",
+      leads_count: 5,
+    },
+    {
+      id: 3,
+      name: "Gourmet Burgers",
+      location: "Birmingham",
+      type: "Restaurant",
+      contact_name: "Michael Brown",
+      status: "pending",
+      commission_type: "Fixed",
+      commission_value: "£10",
+      leads_count: 3,
+    },
+    {
+      id: 4,
+      name: "Fashion Boutique",
+      location: "Glasgow",
+      type: "Retail",
+      contact_name: "Emma Wilson",
+      status: "inactive",
+      commission_type: "Percentage",
+      commission_value: "18%",
+      leads_count: 0,
+    },
+    {
+      id: 5,
+      name: "Tech Gadgets",
+      location: "Edinburgh",
+      type: "Electronics",
+      contact_name: "David Chen",
+      status: "active",
+      commission_type: "Percentage",
+      commission_value: "15%",
+      leads_count: 12,
+    },
+    {
+      id: 6,
+      name: "Healthy Eats",
+      location: "Bristol",
+      type: "Restaurant",
+      contact_name: "Lisa Green",
+      status: "pending",
+      commission_type: "Percentage",
+      commission_value: "14%",
+      leads_count: 2,
+    },
+  ];
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
+
   useEffect(() => {
     async function fetchShops() {
       try {
         setLoading(true);
-        const { data, error } = await supabase.from("shops").select("*");
-
-        if (error) throw error;
-
-        if (data) {
-          setShops(data);
-        }
+        // Simulate API call delay
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        // Use mock data instead of fetching from Supabase
+        setShops(mockShops);
       } catch (error) {
         console.error("Error fetching shops:", error);
       } finally {
@@ -89,11 +156,23 @@ export default function PartnerShops() {
     fetchShops();
   }, []);
 
+  // Filter shops based on search term
   const filteredShops = shops.filter(
     (shop) =>
       shop.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shop.location?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  // Get current shops for pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentShops = filteredShops.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredShops.length / itemsPerPage);
 
   return (
     <div className="min-h-screen bg-[#f5f5f7]">
@@ -141,55 +220,105 @@ export default function PartnerShops() {
                     ))}
                   </div>
                 ) : filteredShops.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredShops.map((shop) => (
-                      <Card
-                        key={shop.id}
-                        className="overflow-hidden hover:shadow-lg transition-shadow duration-300"
-                      >
-                        <CardHeader className="pb-2">
-                          <div className="flex justify-between items-start">
-                            <CardTitle className="text-xl">
-                              {shop.name}
-                            </CardTitle>
-                            <StatusTag status={shop.status || "active"} />
-                          </div>
-                          <CardDescription>{shop.location}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="pb-2">
-                          <div className="flex items-center text-sm text-gray-500 mb-2">
-                            <Building2 className="mr-2 h-4 w-4" />
-                            <span>{shop.type || "Retail"}</span>
-                          </div>
-                          <div className="flex items-center text-sm text-gray-500">
-                            <User className="mr-2 h-4 w-4" />
-                            <span>
-                              {shop.contact_name || "Contact not available"}
-                            </span>
-                          </div>
-                          <div className="mt-4">
-                            <Badge variant="outline" className="mr-2">
-                              {shop.commission_type || "Percentage"}:{" "}
-                              {shop.commission_value || "5%"}
-                            </Badge>
-                            <Badge variant="outline">
-                              {shop.leads_count || "0"} Leads
-                            </Badge>
-                          </div>
-                        </CardContent>
-                        <CardFooter className="pt-2">
-                          <Link
-                            to={`/partner/shop/${shop.id}`}
-                            className="w-full"
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {currentShops.map((shop) => (
+                        <Card
+                          key={shop.id}
+                          className="overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                        >
+                          <CardHeader className="pb-2">
+                            <div className="flex justify-between items-start">
+                              <CardTitle className="text-xl">
+                                {shop.name}
+                              </CardTitle>
+                              <StatusTag status={shop.status || "active"} />
+                            </div>
+                            <CardDescription>{shop.location}</CardDescription>
+                          </CardHeader>
+                          <CardContent className="pb-2">
+                            <div className="flex items-center text-sm text-gray-500 mb-2">
+                              <Building2 className="mr-2 h-4 w-4" />
+                              <span>{shop.type || "Retail"}</span>
+                            </div>
+                            <div className="flex items-center text-sm text-gray-500">
+                              <User className="mr-2 h-4 w-4" />
+                              <span>
+                                {shop.contact_name || "Contact not available"}
+                              </span>
+                            </div>
+                            <div className="mt-4">
+                              <Badge variant="outline" className="mr-2">
+                                {shop.commission_type || "Percentage"}:{" "}
+                                {shop.commission_value || "5%"}
+                              </Badge>
+                              <Badge variant="outline">
+                                {shop.leads_count || "0"} Leads
+                              </Badge>
+                            </div>
+                          </CardContent>
+                          <CardFooter className="pt-2">
+                            <Link
+                              to={`/partner/shop/${shop.id}`}
+                              className="w-full"
+                            >
+                              <Button className="w-full text-primary-foreground shadow h-9 px-4 py-2 bg-blue-600 hover:bg-blue-700">
+                                View Shop Details
+                              </Button>
+                            </Link>
+                          </CardFooter>
+                        </Card>
+                      ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                      <div className="flex justify-center mt-8">
+                        <nav className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              paginate(Math.max(1, currentPage - 1))
+                            }
+                            disabled={currentPage === 1}
                           >
-                            <Button className="w-full text-primary-foreground shadow h-9 px-4 py-2 bg-blue-600 hover:bg-blue-700">
-                              View Shop Details
+                            Previous
+                          </Button>
+
+                          {Array.from(
+                            { length: totalPages },
+                            (_, i) => i + 1,
+                          ).map((number) => (
+                            <Button
+                              key={number}
+                              variant={
+                                currentPage === number ? "default" : "outline"
+                              }
+                              size="sm"
+                              onClick={() => paginate(number)}
+                              className={
+                                currentPage === number ? "bg-blue-600" : ""
+                              }
+                            >
+                              {number}
                             </Button>
-                          </Link>
-                        </CardFooter>
-                      </Card>
-                    ))}
-                  </div>
+                          ))}
+
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              paginate(Math.min(totalPages, currentPage + 1))
+                            }
+                            disabled={currentPage === totalPages}
+                          >
+                            Next
+                          </Button>
+                        </nav>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="text-center py-10">
                     <Store className="mx-auto h-12 w-12 text-gray-400" />

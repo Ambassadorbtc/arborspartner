@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { supabase } from "../../../supabase/supabase";
+import React, { useState, memo } from "react";
 import { formatCurrency } from "@/utils/commissionUtils";
 import TopNavigation from "../dashboard/layout/TopNavigation";
 import Sidebar from "../dashboard/layout/Sidebar";
@@ -21,81 +20,22 @@ import {
   Line,
 } from "recharts";
 import { useAuth } from "../../../supabase/auth";
-
-// Mock data for initial display
-const mockMetrics = {
-  totalSales: 45000,
-  totalCommissions: 6750,
-  activeLeads: 18,
-  pendingLeads: 12,
-  closedLeads: 32,
-};
-
-// Mock data for charts
-const mockMonthlySales = [
-  { month: "Jan", sales: 5000, commissions: 750 },
-  { month: "Feb", sales: 6500, commissions: 975 },
-  { month: "Mar", sales: 8000, commissions: 1200 },
-  { month: "Apr", sales: 7500, commissions: 1125 },
-  { month: "May", sales: 9000, commissions: 1350 },
-  { month: "Jun", sales: 9000, commissions: 1350 },
-];
-
-const mockLeadStatus = [
-  { name: "Pending", value: 12, color: "#FFBB28" },
-  { name: "Spoken To", value: 8, color: "#0088FE" },
-  { name: "Closed", value: 32, color: "#00C49F" },
-  { name: "Rejected", value: 6, color: "#FF8042" },
-];
-
-const mockSalesGrowth = [
-  { month: "Jan", sales: 5000 },
-  { month: "Feb", sales: 6500 },
-  { month: "Mar", sales: 8000 },
-  { month: "Apr", sales: 7500 },
-  { month: "May", sales: 9000 },
-  { month: "Jun", sales: 9000 },
-];
+import { usePartnerDashboardData } from "@/hooks/usePartnerDashboardData";
 
 const PartnerDashboard = () => {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [metrics, setMetrics] = useState(mockMetrics);
-  const [monthlySales, setMonthlySales] = useState(mockMonthlySales);
-  const [leadStatus, setLeadStatus] = useState(mockLeadStatus);
-  const [salesGrowth, setSalesGrowth] = useState(mockSalesGrowth);
   const [dateRange, setDateRange] = useState("month"); // "week", "month", "year"
   const [partnerData, setPartnerData] = useState(null);
 
-  // Function to fetch mock data
-  const fetchDashboardData = async () => {
-    setLoading(true);
-
-    try {
-      // Simulate a delay and use mock data
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Update with mock data
-      setMetrics(mockMetrics);
-      setMonthlySales(monthlySales);
-      setLeadStatus(leadStatus);
-      setSalesGrowth(salesGrowth);
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch data on initial load
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  // Fetch data when date range changes
-  useEffect(() => {
-    fetchDashboardData();
-  }, [dateRange]);
+  // Use our custom hook to fetch and manage dashboard data
+  const {
+    metrics,
+    monthlySales,
+    leadStatus,
+    salesGrowth,
+    loading,
+    fetchDashboardData,
+  } = usePartnerDashboardData(dateRange, user?.id);
 
   const handleRefresh = () => {
     fetchDashboardData();

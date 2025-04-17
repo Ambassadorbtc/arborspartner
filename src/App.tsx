@@ -1,25 +1,37 @@
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import { Navigate, Route, Routes, useRoutes } from "react-router-dom";
 import routes from "tempo-routes";
-import LoginForm from "./components/auth/LoginForm";
-import SignUpForm from "./components/auth/SignUpForm";
-import AdminLoginForm from "./components/auth/AdminLoginForm";
-import PartnerLoginForm from "./components/auth/PartnerLoginForm";
-import AdminDashboard from "./components/admin/AdminDashboard";
-import PartnerDashboard from "./components/partner/PartnerDashboard";
-import PartnerProfile from "./components/partner/PartnerProfile";
-import PartnerSettings from "./components/partner/PartnerSettings";
-import PartnerShops from "./components/partner/PartnerShops";
-import ShopProfile from "./components/partner/ShopProfile";
-import PartnerUpload from "./components/partner/PartnerUpload";
-import PartnerCommissions from "./components/partner/PartnerCommissions";
-import LeadTracking from "./components/partner/LeadTracking";
-import Dashboard from "./components/pages/dashboard";
-import Success from "./components/pages/success";
-import Home from "./components/pages/home";
 import { AuthProvider, useAuth } from "../supabase/auth";
 import { Toaster } from "./components/ui/toaster";
 import { LoadingScreen, LoadingSpinner } from "./components/ui/loading-spinner";
+import Home from "./components/pages/home";
+
+// Lazy load components to reduce initial bundle size
+const LoginForm = lazy(() => import("./components/auth/LoginForm"));
+const SignUpForm = lazy(() => import("./components/auth/SignUpForm"));
+const AdminLoginForm = lazy(() => import("./components/auth/AdminLoginForm"));
+const PartnerLoginForm = lazy(
+  () => import("./components/auth/PartnerLoginForm"),
+);
+const AdminDashboard = lazy(() => import("./components/admin/AdminDashboard"));
+const PartnerDashboard = lazy(
+  () => import("./components/partner/PartnerDashboard"),
+);
+const PartnerProfile = lazy(
+  () => import("./components/partner/PartnerProfile"),
+);
+const PartnerSettings = lazy(
+  () => import("./components/partner/PartnerSettings"),
+);
+const PartnerShops = lazy(() => import("./components/partner/PartnerShops"));
+const ShopProfile = lazy(() => import("./components/partner/ShopProfile"));
+const PartnerUpload = lazy(() => import("./components/partner/PartnerUpload"));
+const PartnerCommissions = lazy(
+  () => import("./components/partner/PartnerCommissions"),
+);
+const LeadTracking = lazy(() => import("./components/partner/LeadTracking"));
+const Dashboard = lazy(() => import("./components/pages/dashboard"));
+const Success = lazy(() => import("./components/pages/success"));
 
 function PrivateRoute({
   children,
@@ -45,24 +57,66 @@ function PrivateRoute({
   return <>{children}</>;
 }
 
+// Wrap components with Suspense to handle loading state
+const SuspenseWrapper = ({ children }) => (
+  <Suspense fallback={<LoadingScreen text="Loading..." />}>{children}</Suspense>
+);
+
 function AppRoutes() {
   return (
     <>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/signup" element={<SignUpForm />} />
-        <Route path="/admin-login" element={<AdminLoginForm />} />
-        <Route path="/partner-login" element={<PartnerLoginForm />} />
+        <Route
+          path="/login"
+          element={
+            <SuspenseWrapper>
+              <LoginForm />
+            </SuspenseWrapper>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <SuspenseWrapper>
+              <SignUpForm />
+            </SuspenseWrapper>
+          }
+        />
+        <Route
+          path="/admin-login"
+          element={
+            <SuspenseWrapper>
+              <AdminLoginForm />
+            </SuspenseWrapper>
+          }
+        />
+        <Route
+          path="/partner-login"
+          element={
+            <SuspenseWrapper>
+              <PartnerLoginForm />
+            </SuspenseWrapper>
+          }
+        />
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard />
+              <SuspenseWrapper>
+                <Dashboard />
+              </SuspenseWrapper>
             </PrivateRoute>
           }
         />
-        <Route path="/success" element={<Success />} />
+        <Route
+          path="/success"
+          element={
+            <SuspenseWrapper>
+              <Success />
+            </SuspenseWrapper>
+          }
+        />
 
         {/* Admin routes */}
         <Route
@@ -73,7 +127,14 @@ function AppRoutes() {
             </PrivateRoute>
           }
         />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <SuspenseWrapper>
+              <AdminDashboard />
+            </SuspenseWrapper>
+          }
+        />
         <Route
           path="/admin/reports"
           element={
@@ -140,15 +201,71 @@ function AppRoutes() {
             </PrivateRoute>
           }
         />
-        <Route path="/partner/dashboard" element={<PartnerDashboard />} />
-        <Route path="/partner/shops" element={<PartnerShops />} />
-        <Route path="/partner/shop/:shopId" element={<ShopProfile />} />
+        <Route
+          path="/partner/dashboard"
+          element={
+            <SuspenseWrapper>
+              <PartnerDashboard />
+            </SuspenseWrapper>
+          }
+        />
+        <Route
+          path="/partner/shops"
+          element={
+            <SuspenseWrapper>
+              <PartnerShops />
+            </SuspenseWrapper>
+          }
+        />
+        <Route
+          path="/partner/shop/:shopId"
+          element={
+            <SuspenseWrapper>
+              <ShopProfile />
+            </SuspenseWrapper>
+          }
+        />
         <Route path="/partner/success" element={<div>Track Success</div>} />
-        <Route path="/partner/upload" element={<PartnerUpload />} />
-        <Route path="/partner/tracking" element={<LeadTracking />} />
-        <Route path="/partner/commissions" element={<PartnerCommissions />} />
-        <Route path="/partner/profile" element={<PartnerProfile />} />
-        <Route path="/partner/settings" element={<PartnerSettings />} />
+        <Route
+          path="/partner/upload"
+          element={
+            <SuspenseWrapper>
+              <PartnerUpload />
+            </SuspenseWrapper>
+          }
+        />
+        <Route
+          path="/partner/tracking"
+          element={
+            <SuspenseWrapper>
+              <LeadTracking />
+            </SuspenseWrapper>
+          }
+        />
+        <Route
+          path="/partner/commissions"
+          element={
+            <SuspenseWrapper>
+              <PartnerCommissions />
+            </SuspenseWrapper>
+          }
+        />
+        <Route
+          path="/partner/profile"
+          element={
+            <SuspenseWrapper>
+              <PartnerProfile />
+            </SuspenseWrapper>
+          }
+        />
+        <Route
+          path="/partner/settings"
+          element={
+            <SuspenseWrapper>
+              <PartnerSettings />
+            </SuspenseWrapper>
+          }
+        />
       </Routes>
       {/* Add tempo routes */}
       {useRoutes(routes)}

@@ -5,6 +5,8 @@ import Sidebar from "../dashboard/layout/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/components/ui/use-toast";
+import EditShopInline from "./EditShopInline";
 import {
   LayoutDashboard,
   Store,
@@ -135,6 +137,7 @@ interface ShopProfileProps {
 }
 
 const ShopProfile: React.FC<ShopProfileProps> = ({ shopId }) => {
+  const { toast } = useToast();
   const params = useParams<{ shopId: string }>();
   const id = shopId || parseInt(params.shopId || "0");
   const [shop, setShop] = useState<Shop | null>(null);
@@ -142,6 +145,7 @@ const ShopProfile: React.FC<ShopProfileProps> = ({ shopId }) => {
   const [activeTab, setActiveTab] = useState<
     "details" | "leads" | "commissions"
   >("details");
+  const [showEditForm, setShowEditForm] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -244,6 +248,15 @@ const ShopProfile: React.FC<ShopProfileProps> = ({ shopId }) => {
     );
   }
 
+  const handleSaveShop = (updatedShop: Shop) => {
+    setShop(updatedShop);
+    setShowEditForm(false);
+    toast({
+      title: "Shop updated",
+      description: "Shop details have been updated successfully.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#f5f5f7]">
       <TopNavigation />
@@ -269,7 +282,10 @@ const ShopProfile: React.FC<ShopProfileProps> = ({ shopId }) => {
                   {shop.status.charAt(0).toUpperCase() + shop.status.slice(1)}
                 </Badge>
               </div>
-              <Button className="justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary-foreground shadow h-9 px-4 py-2 bg-blue-600 hover:bg-blue-700 flex items-center gap-2">
+              <Button
+                className="justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary-foreground shadow h-9 px-4 py-2 bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
+                onClick={() => setShowEditForm(true)}
+              >
                 <Edit className="h-4 w-4" />
                 Edit Shop
               </Button>
@@ -302,7 +318,7 @@ const ShopProfile: React.FC<ShopProfileProps> = ({ shopId }) => {
               </div>
             </div>
 
-            {activeTab === "details" && (
+            {activeTab === "details" && !showEditForm && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Shop Information */}
                 <Card className="md:col-span-2 bg-white shadow-sm border border-gray-200">
@@ -490,7 +506,15 @@ const ShopProfile: React.FC<ShopProfileProps> = ({ shopId }) => {
               </div>
             )}
 
-            {activeTab === "leads" && (
+            {activeTab === "details" && showEditForm && (
+              <EditShopInline
+                shop={shop}
+                onCancel={() => setShowEditForm(false)}
+                onSave={handleSaveShop}
+              />
+            )}
+
+            {activeTab === "leads" && !showEditForm && (
               <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
                 <div className="p-6 border-b border-gray-200">
                   <h2 className="text-lg font-semibold text-gray-900">
@@ -509,7 +533,7 @@ const ShopProfile: React.FC<ShopProfileProps> = ({ shopId }) => {
               </div>
             )}
 
-            {activeTab === "commissions" && (
+            {activeTab === "commissions" && !showEditForm && (
               <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
                 <div className="p-6 border-b border-gray-200">
                   <h2 className="text-lg font-semibold text-gray-900">

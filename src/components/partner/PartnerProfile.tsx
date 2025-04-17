@@ -15,6 +15,7 @@ import {
   User,
   Settings,
   Save,
+  ArrowLeft,
 } from "lucide-react";
 
 const PartnerProfile = () => {
@@ -98,9 +99,20 @@ const PartnerProfile = () => {
         <Sidebar items={navItems} activeItem="Profile" />
         <main className="flex-1 overflow-auto p-4 md:p-6 pb-20 md:pb-6">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">
-              Partner Profile
-            </h1>
+            <div className="flex items-center gap-4 mb-6">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.history.back()}
+                className="flex items-center gap-1"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Partner Profile
+              </h1>
+            </div>
 
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="p-6 border-b border-gray-200">

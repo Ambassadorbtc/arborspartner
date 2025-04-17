@@ -17,6 +17,7 @@ import {
   Calendar,
   Filter,
   CheckCircle,
+  ArrowLeft,
 } from "lucide-react";
 
 interface Commission {
@@ -218,9 +219,20 @@ const PartnerCommissions = () => {
         <main className="flex-1 overflow-auto p-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">
-                Commission Payments
-              </h1>
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.history.back()}
+                  className="flex items-center gap-1"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back
+                </Button>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Commission Payments
+                </h1>
+              </div>
               <Button className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2">
                 <Download className="h-4 w-4" />
                 Export Statement

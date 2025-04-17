@@ -23,6 +23,7 @@ import {
   Upload,
   DollarSign,
   Settings,
+  ArrowLeft,
 } from "lucide-react";
 import StatusTag from "@/components/common/StatusTag";
 import TopNavigation from "../dashboard/layout/TopNavigation";
@@ -182,7 +183,18 @@ export default function PartnerShops() {
         <main className="flex-1 overflow-auto p-4 md:p-6 pb-20 md:pb-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold">My Shops</h1>
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.history.back()}
+                  className="flex items-center gap-1"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back
+                </Button>
+                <h1 className="text-3xl font-bold">My Shops</h1>
+              </div>
               <Button className="text-primary-foreground shadow h-9 px-4 py-2 bg-blue-600 hover:bg-blue-700">
                 <Store className="mr-2 h-4 w-4" /> Add New Shop
               </Button>

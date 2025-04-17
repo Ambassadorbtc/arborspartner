@@ -3,7 +3,7 @@ import { formatCurrency } from "@/utils/commissionUtils";
 import TopNavigation from "../dashboard/layout/TopNavigation";
 import Sidebar from "../dashboard/layout/Sidebar";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   BarChart as RechartsBarChart,
@@ -64,9 +64,20 @@ const AdminDashboard = () => {
         <Sidebar items={navItems} activeItem="Dashboard" />
         <main className="flex-1 overflow-auto pb-20 md:pb-6">
           <div className="container mx-auto px-4 md:px-6 pt-4 pb-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Admin Dashboard
-            </h1>
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.history.back()}
+                className="flex items-center gap-1"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Admin Dashboard
+              </h1>
+            </div>
             <div className="flex items-center gap-2 md:gap-4 w-full sm:w-auto">
               <div className="flex rounded-lg overflow-hidden border border-gray-200 bg-white flex-1 sm:flex-initial">
                 <Button

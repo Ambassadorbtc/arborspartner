@@ -31,6 +31,7 @@ import {
   Settings,
   Search,
   Filter,
+  ArrowLeft,
 } from "lucide-react";
 
 // Using the mock Lead type defined above
@@ -176,9 +177,20 @@ const LeadTracking = () => {
         <Sidebar items={navItems} activeItem="Leads" />
         <main className="flex-1 overflow-auto p-4 md:p-6 pb-20 md:pb-6">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">
-              Lead Tracking
-            </h1>
+            <div className="flex items-center gap-4 mb-6">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.history.back()}
+                className="flex items-center gap-1"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Lead Tracking
+              </h1>
+            </div>
 
             {/* Filters */}
             <div className="bg-white p-4 rounded-lg shadow-sm mb-4 md:mb-6 flex flex-col sm:flex-row gap-4">

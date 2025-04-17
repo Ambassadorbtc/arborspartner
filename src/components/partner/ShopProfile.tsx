@@ -130,8 +130,13 @@ const mockShops: Shop[] = [
   },
 ];
 
-const ShopProfile = () => {
-  const { shopId } = useParams<{ shopId: string }>();
+interface ShopProfileProps {
+  shopId?: number;
+}
+
+const ShopProfile: React.FC<ShopProfileProps> = ({ shopId }) => {
+  const params = useParams<{ shopId: string }>();
+  const id = shopId || parseInt(params.shopId || "0");
   const [shop, setShop] = useState<Shop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
@@ -142,11 +147,11 @@ const ShopProfile = () => {
     setIsLoading(true);
     // Simulate API call to fetch shop details
     setTimeout(() => {
-      const foundShop = mockShops.find((s) => s.id === Number(shopId));
+      const foundShop = mockShops.find((s) => s.id === Number(id));
       setShop(foundShop || null);
       setIsLoading(false);
     }, 800);
-  }, [shopId]);
+  }, [id]);
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
@@ -407,7 +412,9 @@ const ShopProfile = () => {
                           Status
                         </h3>
                         <Badge
-                          className={`${getStatusBadgeColor(shop.status)} border`}
+                          className={`${getStatusBadgeColor(
+                            shop.status,
+                          )} border mt-1`}
                         >
                           {shop.status.charAt(0).toUpperCase() +
                             shop.status.slice(1)}

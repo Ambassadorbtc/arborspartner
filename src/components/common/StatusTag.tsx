@@ -1,6 +1,12 @@
 import { cn } from "@/lib/utils";
 
-type StatusType = "pending" | "spoken" | "closed" | "rejected";
+type StatusType =
+  | "pending"
+  | "spoken"
+  | "closed"
+  | "rejected"
+  | "active"
+  | "inactive";
 
 interface StatusTagProps {
   status: StatusType;
@@ -34,9 +40,26 @@ const StatusTag = ({ status, className }: StatusTagProps) => {
       borderColor: "border-red-200",
       label: "Rejected",
     },
+    active: {
+      bgColor: "bg-green-100",
+      textColor: "text-green-800",
+      borderColor: "border-green-200",
+      label: "Active",
+    },
+    inactive: {
+      bgColor: "bg-gray-100",
+      textColor: "text-gray-800",
+      borderColor: "border-gray-200",
+      label: "Inactive",
+    },
   };
 
-  const config = statusConfig[status];
+  const config = statusConfig[status] || {
+    bgColor: "bg-gray-100",
+    textColor: "text-gray-800",
+    borderColor: "border-gray-200",
+    label: status.charAt(0).toUpperCase() + status.slice(1),
+  };
 
   return (
     <span

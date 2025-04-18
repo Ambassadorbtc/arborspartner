@@ -236,7 +236,7 @@ const ShopProfile: React.FC<ShopProfileProps> = ({ shopId }) => {
                 </p>
                 <Button
                   className="justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary-foreground shadow h-9 px-4 py-2 bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
-                  onClick={() => (window.location.href = "/partner/shops")}
+                  onClick={() => window.history.back()}
                 >
                   <ArrowLeft className="h-4 w-4" /> Back to Shops
                 </Button>
@@ -268,7 +268,7 @@ const ShopProfile: React.FC<ShopProfileProps> = ({ shopId }) => {
               <div className="flex items-center gap-3">
                 <Button
                   className="justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-primary-foreground shadow h-9 px-4 py-2 bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
-                  onClick={() => (window.location.href = "/partner/shops")}
+                  onClick={() => window.history.back()}
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Back
